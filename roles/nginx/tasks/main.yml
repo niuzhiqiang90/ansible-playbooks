@@ -1,0 +1,46 @@
+################################################################################
+#          FILE: nginx/tasks/main.yml
+#         USAGE: 
+#   DESCRIPTION: the nginx
+#       OPTIONS: --- 
+#          BUGS: --- 
+#         NOTES: --- 
+#        AUTHOR: niuzhiqiang, niuzhiqiang90@foxmail.com
+#  ORGANIZATION: 
+#       CREATED: Tue 06 Nov 2018 11:30:53 AM CST
+#      REVISION: 1.0.0
+################################################################################
+---
+
+- name: clone the nginx 
+  git: repo={{ ngx_repo_url }} dest={{ ngx_dest_path }} accept_hostkey=yes version={{ ngx_branch }}
+
+- name: clone the ngx upsync module
+  git: repo={{ ngx_upsync_module_repo_url }} dest={{ ngx_upsync_module_dest_path}}
+
+- name: install dependency
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - libssl-dev
+    - libpcre3
+    - libpcre3-dev
+    - zlib1g-dev
+  sudo: yes
+
+- name: run configure cmd
+  command: "{{ ngx_configure_cmd }}"
+  args:
+    chdir: "{{ ngx_dest_path }}"
+
+- name: run make cmd
+  shell: make -j2
+  args:
+    chdir: "{{ ngx_dest_path }}"
+
+- name: run make install cmd
+  command: make install
+  args:
+    chdir: "{{ ngx_dest_path }}"
+
+#TODO
+# create the config link 

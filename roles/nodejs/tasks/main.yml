@@ -1,0 +1,63 @@
+################################################################################
+#          FILE: nodejs/tasks/main.yml
+#         USAGE: 
+#   DESCRIPTION: install node and some packages 
+#       OPTIONS: --- 
+#          BUGS: --- 
+#         NOTES: --- 
+#        AUTHOR: niuzhiqiang, niuzhiqiang90@foxmail.com
+#  ORGANIZATION: 
+#       CREATED: Tue 06 Nov 2018 02:07:46 PM CST
+#      REVISION: 1.0.0
+################################################################################
+---
+#- name: clone the nodejs repository on the host
+#  git: repo={{ node_repo_url }} dest={{ node_dest_path }} accept_hostkey=yes version={{ node_branch }}
+#  tags: node.clone
+
+- name: run the configure cmd
+  command: ./configure
+  args:
+    chdir: "{{ node_dest_path }}"
+  tags: node.configure
+
+- name: run the make cmd
+  command: make -j4
+  args:
+    chdir: "{{ node_dest_path }}"
+  tags: node.make
+
+- name: run the make install cmd
+  command: make install
+  args:
+    chdir: "{{ node_dest_path }}"
+  sudo: yes
+  tags: node.install
+
+- name: set npm registry
+  shell: npm config set registry  https://registry.npm.taobao.org
+  tags: node.set.npm
+
+- name: install grunt package
+  npm:
+    name: grunt-cli
+    production: yes
+    global: yes
+    #path: /usr/local/bin
+    #version: latest
+  sudo: yes
+  tags: node.npm.install
+
+- name: install typings package 
+  npm:
+    name: typings
+    production: yes
+    global: yes
+    #path: /usr/local/bin
+    #version: latest
+    #registry: https://registry.npm.taobao.org
+  sudo: yes
+  tags: node.npm.install
+
+
+

@@ -1,0 +1,72 @@
+################################################################################
+#          FILE: mongodb/tasks/main.yml
+#         USAGE: 
+#   DESCRIPTION: 
+#       OPTIONS: --- 
+#          BUGS: --- 
+#         NOTES: --- 
+#        AUTHOR: niuzhiqiang, niuzhiqiang90@foxmail.com
+#  ORGANIZATION: 
+#       CREATED: Thu 08 Nov 2018 11:33:16 AM CST
+#      REVISION: 1.0.0
+################################################################################
+---
+- name: Download mongodb-{{ mongodb_version }} pkgs
+  get_url:
+    url: "{{ mongodb_download_url }}"
+    dest: "{{ mongodb_dest_path }}"
+  tags: mongodb.download
+
+- name: unarchive the mongodb-{{ mongodb_version }} pkgs
+  unarchive:
+    src: "{{ mongodb_dest_path }}"
+    dest: "{{ opt_path }}"
+    remote_src: yes
+  tags: mongodb.unarchive
+
+- name: find the directory
+  shell: ls -d mongodb-*-{{ mongodb_version }}
+  args:
+    chdir: "{{ opt_path }}"
+  register: mongodb_path
+  tags: mongodb.install
+
+- name: rename when the directory not exist
+  shell: mv {{ mongodb_path.stdout }} mongodb-{{ mongodb_version }}
+  args:
+    chdir: "{{ opt_path }}"
+    creates: mongodb-{{ mongodb_version }}
+  tags: mongodb.install
+
+- name: create the config directory
+  file:
+    path: /home/{{ user }}/opt/mongodb-{{ mongodb_version }}/conf
+    state: directory
+  tags: mongodb.install
+
+- name: create the data directory
+  file:
+    path: /mnt/data/dbs/mongodb/data
+    state: directory
+  tags: mongodb.create.datadir
+
+- name: create the log directory
+  file:
+    path: /mnt/data/dbs/mongodb/logs
+    state: directory
+  tags: mongodb.create.logdir
+
+  #- name: Check the mongodb-{{ mongodb_version }} path
+  #  shell: ls mongodb-{{ mongodb_version }}
+  #  ignore_errors: True
+  #  args:
+  #    chdir: "{{ opt_path }}"
+  #    warn: False
+  #  register: mongodb_new_path
+  #
+  #  #- debug: var=mongodb_new_path.stdout
+  #- name: rename
+  #  shell: mv {{ mongodb_path.stdout }} mongodb-{{ mongodb_version }}
+  #  args:
+  #    chdir: "{{ opt_path }}"
+  #  when: mongodb_new_path | failed

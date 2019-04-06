@@ -1,0 +1,49 @@
+################################################################################
+#          FILE: redis/tasks/main.yml
+#         USAGE: 
+#   DESCRIPTION: 
+#       OPTIONS: --- 
+#          BUGS: --- 
+#         NOTES: --- 
+#        AUTHOR: niuzhiqiang, niuzhiqiang90@foxmail.com
+#  ORGANIZATION: 
+#       CREATED: Tue 06 Nov 2018 10:23:11 AM CST
+#      REVISION: 1.0.0
+################################################################################
+---
+
+- name: git clone the redis repository on the host
+  git: repo={{ redis_repo_url }} dest={{ redis_dest_path }} accept_hostkey=yes version={{ redis_version }}
+
+- name: run make cmd
+  command: make
+  args:
+    chdir: "{{ redis_dest_path }}"
+
+- name: run make install cmd
+  command: make PREFIX={{ redis_install_path }} install
+  args:
+    chdir: "{{ redis_dest_path }}"
+
+- name: create the config path
+  file: path={{ redis_install_path }}/conf state=directory
+
+- name: create the redis master config file
+  file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  with_items:
+    - { src: '{{ redis_master_config_file }}', dest: '{{ redis_config_file }}' }
+  when:
+    ansible_eth0['ipv4']['address'] == "{{ redis_master_ip }}"
+
+- name: create the redis slaver config file
+  file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  with_items:
+    - { src: '{{ redis_slaver_config_file }}', dest: '{{ redis_config_file }}' }
+  when:
+    ansible_eth0['ipv4']['address'] == "{{ redis_slaver_ip }}"

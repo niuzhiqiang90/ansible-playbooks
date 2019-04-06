@@ -1,0 +1,53 @@
+################################################################################
+#          FILE: supervisor/tasks/main.yml
+#         USAGE: 
+#   DESCRIPTION: 
+#       OPTIONS: --- 
+#          BUGS: --- 
+#         NOTES: --- 
+#        AUTHOR: niuzhiqiang, niuzhiqiang90@foxmail.com
+#  ORGANIZATION: 
+#       CREATED: Mon Nov 19 09:21:16 2018
+#      REVISION: 1.0.0
+################################################################################
+
+- name: install supervisor
+  pip:
+    name: supervisor
+  tags: supervisor.install
+
+- name: create supervisor config directory
+  file:
+    path: /etc/supervisor/conf.d
+    state: directory
+  sudo: yes
+  tags: supervisor.create.config.dir
+
+- name: link the supervisor config
+  file:
+    #src: /home/{{ user }}/opt/rongxin.operation/supervisor-conf/supervisord.conf
+    src: "{{ supervisord_config }}"
+    dest: /etc/supervisor/supervisord.conf
+    state: link
+  sudo: yes
+  tags: supervisor.link.config
+
+- name: modify /var/run mode
+  file:
+    path: /var/run
+    mode: 0777
+  sudo: yes
+  tags: supervisor.chmod
+
+- name: mkdir supervisor log directory
+  file:
+    path: /var/log/supervisor
+    mode: 0777
+    state: directory
+  sudo: yes
+  tags: supervisor.create.logdir
+
+- name: start supervisor
+  command: /usr/local/bin/supervisord
+  tags: supervisor.start
+

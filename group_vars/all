@@ -1,0 +1,97 @@
+#
+#
+#
+#
+# configure for common
+user: justDoIT 
+bashrc: /home/{{ user }}/.bashrc
+
+swap_file_path: /mnt/data/swap_mount
+swap_file_size_mb: 8192
+#swap_file_size_mb: 8192
+#
+opt_path: /home/{{ user }}/opt
+
+
+# supervisor configure
+supervisord_config: /home/{{ user }}/opt/operation/supervisor-conf/supervisord.conf
+
+# mongodb configure
+mongodb_version: 3.4.10
+mongodb_download_url: http://downloads.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1604-{{ mongodb_version }}.tgz
+mongodb_dest_path: /home/{{ user }}/opt/mongodb-{{ mongodb_version }}.tar.gz
+
+# TODO
+# the operation git repository
+
+
+#
+# node
+#
+node_item: typings grunt
+
+
+#
+# golang configure
+#
+golang_version: 1.10.5
+golang_download_url: https://dl.google.com/go/go{{ golang_version }}.linux-amd64.tar.gz
+golang_dest_path: /home/{{ user }}/opt/golang-{{ golang_version }}.tar.gz
+golang_unarchive_path: /home/{{ user }}/opt
+golang_install_path: /usr/local
+gopath: /home/{{ user }}/opt/gopath
+
+#
+# consul configure
+#
+consul_version: 1.3.0
+consul_download_url: https://releases.hashicorp.com/consul/1.3.0/consul_{{ consul_version }}_linux_amd64.zip
+consul_dest_path: /home/{{ user }}/opt
+consul_bin_path: /home/{{ user }}/opt/consul/bin
+consul_config_path: /home/{{ user }}/opt/consul/config
+
+
+#
+# zookeeper configure
+#
+zookeeper_version: 3.4.10
+zookeeper_download_url: https://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-{{ zookeeper_version }}/zookeeper-{{ zookeeper_version }}.tar.gz
+zookeeper_dest_path: /home/{{ user }}/opt
+zookeeper_bin_path: /home/{{ user }}/opt/zookeeper/bin 
+zookeeper_config_path: /home/{{ user }}/opt/zookeeper/conf
+
+#
+# the config for redis
+#
+redis_repo_url: https://github.com/antirez/redis.git
+redis_dest_path: /home/{{ user }}/opt/redis-release
+redis_version: 3.0.5
+redis_install_path: /home/{{ user }}/opt/redis-{{ redis_version }}
+redis_master_ip: "192.168.1.103"
+redis_slaver_ip: "192.168.1.103"
+redis_config_file: /home/{{ user }}/opt/redis-{{ redis_version }}/conf/redis.conf
+redis_master_config_file: /home/{{ user }}/redis.conf.master
+redis_slaver_config_file: /home/{{ user }}/redis.conf.slaver
+
+#
+# the config for node
+#
+node_repo_url: https://github.com/nodejs/node.git
+node_dest_path: /home/{{ user }}/opt/node
+node_branch: v8.9.4
+
+
+#
+# the config for nginx
+#
+ngx_repo_url: https://github.com/nginx/nginx.git
+ngx_dest_path: /home/{{ user }}/opt/nginx-release
+ngx_version: 1.9.15
+ngx_branch: release-{{ ngx_version }}
+ngx_install_path: /home/{{ user }}/opt/nginx-{{ ngx_version }}
+ngx_upsync_module_repo_url: https://github.com/leezhenghui/ngx_upsync_module.git
+ngx_upsync_module_dest_path: /home/{{ user }}/opt/ngx_upsync_module
+ngx_configure_cmd: ./auto/configure --prefix="{{ ngx_install_path }}" --with-http_stub_status_module --with-http_ssl_module --add-module={{ ngx_upsync_module_dest_path }} --with-debug
+
+
+

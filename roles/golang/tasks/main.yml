@@ -1,0 +1,53 @@
+################################################################################
+#          FILE: golang/tasks/main.yml
+#         USAGE:
+#   DESCRIPTION:
+#       OPTIONS: ---
+#          BUGS: ---
+#         NOTES: ---
+#        AUTHOR: niuzhiqiang, niuzhiqiang90@foxmail.com
+#  ORGANIZATION:
+#       CREATED: Tue 06 Nov 2018 04:09:58 PM CST
+#      REVISION: 1.0.0
+################################################################################
+---
+- name: download golang pkgs
+  get_url:
+    url: "{{ golang_download_url }}"
+    dest: "{{ golang_dest_path }}"
+
+- name: create the directory
+  file:
+    path: "{{ golang_unarchive_path }}"
+    state: directory
+
+  #- name: absent go path
+  #  file:
+  #    path: "{{ golang_install_path }}"
+  #    state: absent
+  #  #sudo: yes
+
+- name: unarchive the file
+  unarchive: #src={{ golang_dest_path }} dest={{ golang_install_path }} remote_src=yes
+    src: "{{ golang_dest_path }}"
+    dest: "{{ golang_unarchive_path }}"
+    remote_src: yes
+
+- name: move to the /usr/local
+  command: mv {{ golang_unarchive_path }}/go {{ golang_install_path }}
+  sudo: yes
+
+- name: create gopath
+  file:
+    path: "{{ gopath }}"
+    state: directory
+
+- name: add env
+  lineinfile:
+    dest: "{{ bashrc }}"
+    regexp: "{{ item.name }}"
+    line: "{{ item.value }}"
+  with_items:
+      - { name: '^export GOPATH', value: 'export GOPATH={{ gopath }}' }
+      - { name: '^export PATH', value: 'export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin' }
+

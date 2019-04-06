@@ -1,0 +1,46 @@
+################################################################################
+#          FILE: main.yml
+#   DESCRIPTION:
+#       OPTIONS: ---
+#          BUGS: ---
+#         NOTES: ---
+#        AUTHOR: niuzhiqiang, niuzhiqiang90@foxmail.com
+#  ORGANIZATION:
+#       CREATED: Tue 07 Nov 2018 10:05:32 AM CST
+#      REVISION: 1.0.0
+################################################################################
+---
+- hosts: huaweiyun
+  roles:
+    - role: common
+      tags: common
+
+    - role: supervisor
+      tags: supervisor
+
+    - role: nodejs
+      tags: node
+
+    - role: mongodb
+      tags: mongodb
+
+    - role: redis
+      tags: redis
+
+    - role: dnsmasq
+      tags: dnsmasq
+
+    - role: golang
+      tags: golang
+
+    - role: consul
+      tags: consul
+
+    - role: zookeeper
+      tags: zookeeper
+
+- hosts: huaweiyun-2
+  roles:
+    - role: nginx
+      tags: nginx
+

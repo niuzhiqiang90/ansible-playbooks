@@ -1,0 +1,36 @@
+################################################################################
+#          FILE: consul/tasks/main.yml
+#         USAGE:
+#   DESCRIPTION:
+#       OPTIONS: ---
+#          BUGS: ---
+#         NOTES: ---
+#        AUTHOR: niuzhiqiang, niuzhiqiang90@foxmail.com
+#  ORGANIZATION:
+#       CREATED: Tue 06 Nov 2018 09:52:51 PM CST
+#      REVISION: 1.0.0
+################################################################################
+---
+#- name: download consul pkgs
+#  get_url:
+#    url: "{{ consul_download_url }}"
+#    dest: "{{ consul_dest_path }}"
+#
+#
+- name: create consul path
+  file:
+    path: "{{ item.name }}"
+    state: directory
+  with_items:
+    - { name: "{{ consul_bin_path }}" }
+    - { name: "{{ consul_config_path }}" }
+
+- name: copy consul to hosts
+  copy:
+    src: consul
+    dest: /home/{{ user }}/opt/consul/bin/
+    mode: u=rwx
+
+#TODO
+# - name: create the config file
+

@@ -1,0 +1,54 @@
+################################################################################
+#          FILE: dnsmasq/tasks/main.yml
+#         USAGE: 
+#   DESCRIPTION: 
+#       OPTIONS: --- 
+#          BUGS: --- 
+#         NOTES: --- 
+#        AUTHOR: niuzhiqiang, niuzhiqiang90@foxmail.com
+#  ORGANIZATION: 
+#       CREATED: Mon Nov 19 20:23:12 2018
+#      REVISION: 1.0.0
+################################################################################
+
+- name: install dnsmasq
+  apt:
+    name: dnsmasq
+    state: present
+  sudo: yes
+
+- name: modify the configure file
+  lineinfile:
+    dest: /etc/dnsmasq.conf
+    regexp: "{{ item.name }}"
+    line: "{{ item.value }}"
+  with_items:
+    - { name: '^bogus-priv', value: 'bogus-priv' }
+    - { name: '^listen-address', value: 'listen-address=127.0.0.1' }
+    - { name: '^bind-interfaces', value: 'bind-interfaces' }
+  sudo: yes
+        #domain=mydomain.net
+        #expand-hosts
+        #local=/mydomain.net/
+        #
+
+- name: touch consul
+  file:
+    path: /etc/dnsmasq.d/consul
+    state: touch
+  sudo: yes
+
+- name: enable consul
+  lineinfile:
+    dest: /etc/dnsmasq.d/consul
+    regexp: "{{ item.name }}"
+    line: "{{ item.value }}"
+  with_items:
+    - { name: '^server', value: 'server=/consul/127.0.0.1#8600' }
+  sudo: yes
+
+- name: start dnsmasq
+  service:
+    name: dnsmasq
+    state: started
+  sudo: yes

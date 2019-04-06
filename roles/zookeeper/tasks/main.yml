@@ -1,0 +1,34 @@
+################################################################################
+#          FILE: zookeeper/tasks/main.yml
+#         USAGE:
+#   DESCRIPTION:
+#       OPTIONS: ---
+#          BUGS: ---
+#         NOTES: ---
+#        AUTHOR: niuzhiqiang, niuzhiqiang90@foxmail.com
+#  ORGANIZATION:
+#       CREATED: Tue 06 Nov 2018 09:52:51 PM CST
+#      REVISION: 1.0.0
+################################################################################
+---
+- name: aaa
+  get_url:
+    url: "{{ zookeeper_download_url }}"
+    dest: "{{ zookeeper_dest_path }}"
+
+- file:
+    path: "{{ item.name }}"
+    state: directory
+  with_items:
+    - { name: "{{ zookeeper_bin_path }}" }
+    - { name: "{{ zookeeper_config_path }}" }
+
+- name: copy zookeeper to hosts
+  copy:
+    src: zookeeper
+    dest: /home/{{ user }}/opt/zookeeper/bin/
+    mode: u=rwx
+
+#TODO
+# - name: create the config file
+
